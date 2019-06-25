@@ -1,5 +1,3 @@
-Another problem for day 3:
-
 Cookie World Order (**web**)
 
     Good job! You found a further credential that looks like a VPN 
@@ -12,7 +10,7 @@ Cookie World Order (**web**)
     members of the cWo. Go forth and attain greater access to reach 
     this creature!
 
-Similarly with previous case, we have a URL: https://cwo-xss.web.ctfcompetition.com/
+Similarly with day 3 web problem case, we have a URL: https://cwo-xss.web.ctfcompetition.com/
 
 Opening it and observing very similar page with Admin and field for 
 input some text message.
