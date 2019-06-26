@@ -66,7 +66,7 @@ exploitation must not differ significally from those of x86
 architecture. Because with MIPS we have almost exactly the same: 
 
   - *stack* that is contigous block of memory;
-  - *frame pointer* and *stack pointer* - two addressed within 
+  - *frame pointer* and *stack pointer* - two addresses within 
     *stack* that specify *stack frame* used for function arguments and
     local variables (they are `fp` and `sp` in radare2);
   - *return address* that is pushed to the *stack* on function call and 
@@ -145,7 +145,7 @@ Important things are:
   restored before returning from `main`)
   - the rest 0x120 = 288 bytes of stack are local variables
   - `scanf()` reads data to `fp+0x1c` which is the same as `sp+0x1c` 
-  because of `mov fp, sp` after function's epilogue, i.e. we can 
+  because of `mov fp, sp` after function's prologue, i.e. we can 
   safely pass up to 0x120 - 0x1c = 0x104 = 260 characters before 
   starting to overwrite at first `fp` value and then `ra` value
   - there is very interesting subroutine `sym.local_flag`
