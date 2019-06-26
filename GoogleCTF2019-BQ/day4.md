@@ -26,7 +26,7 @@ to compile `console.c`, because qemu can be invoked manually:
     Cauliflower systems never crash >>
     hello
 
-Okay, it is must be very easy just to overflow buffer. Say, 1 kb  
+Okay, it is must be very easy just to overflow buffer. Say, 1 kb 
 should be enough:
 
     $ python -c "print('A'*1024)" | qemu-mipsel ./bof
@@ -61,7 +61,7 @@ Here is first flag:
 
 Now next to the second flag. Use radare2 for it. As MIPS instruction 
 set can looked unfamiliar, one can turn on disasm descriptions to ease 
-understanding of what is going on. Basically, the buffer overflow 
+understanding of what is going on. Essentially, the buffer overflow 
 exploitation must not differ significally from those of x86 
 architecture. Because with MIPS we have almost exactly the same: 
 
@@ -147,7 +147,8 @@ Important things are:
   - `scanf()` reads data to `fp+0x1c` which is the same as `sp+0x1c` 
   because of `mov fp, sp` after function's epilogue, i.e. we can 
   safely pass up to 0x120 - 0x1c = 0x104 = 260 characters before 
-  starting to overwrite at first `fp` value and then `ra` value.
+  starting to overwrite at first `fp` value and then `ra` value
+  - there is very interesting subroutine `sym.local_flag`
 
 Stack layout can be represented as following (I prefer left-to-right 
 layout instead of top-to-bottom because it is more natural for me and 
@@ -177,21 +178,21 @@ of written bytes are one plus size of input):
     Illegal instruction
     .........
 
-Wow, it seems like writing to `fp` do not causes any problems. I think 
-it is because caller of `main()` do not use this value (his stack 
+Wow, it seems like writing to `fp` does not cause any problems. I think 
+it is because caller of `main()` does not use this value (his stack 
 pointer).
 But look, writing to `ra` leads to some weird results. It is because 
 program jumps to some strange address of memory which contains byte 
 trash and not the working code.
 
-Now let's think what jumping address can be of out interest. It is very 
+Now let's think what jumping address can be of our interest. It is very 
 desirable to jump to `0x004009d4`, for example, so execution flow 
 enters function `sym.local_flag`, which is obviously our goal.
-The problem is, this address contains byte `0x09` which in fact is `\t` 
-whitespace character and `scanf()` will replace it with `\0` and stop 
-reading. We need address that do not contain any whitespace character, 
-and not contain '\0' (except at the end, or in the high bytes).
-Let's look into `sym.local_flag` itself:
+The problem is, this address contains byte `0x09` which in fact is 
+`'\t'` whitespace character and `scanf()` will replace it with `'\0'` 
+and stop reading. We need address that do not contain any whitespace 
+character, and not contain '\0' (except at the end, or in the high 
+bytes). Let's look into `sym.local_flag` itself:
 
     [0x00400530]> pdf@sym.local_flag
     / (fcn) sym.local_flag 84
@@ -225,13 +226,13 @@ Let's look into `sym.local_flag` itself:
     \           0x00400890      00000000       nop                         ; no operation
 
 
-Yeah, this is out day! Let's take address `0x00400858`, I like it 
+Yeah, this is our day! Let's take address `0x00400858`, I like it 
 because it restores `fp` value for something useful and we must not 
-thinking a lot about what to write to it.
+think a lot about what to write to it.
 All pieces together: 260 bytes of trash, 4 bytes of more trash 
 (because `fp` will be overwritten very soon) and 4 bytes of return 
 address to `0x00400858` (remember byte ordering, it is 58:08:40:00 in 
-order), high byte of which we must not send, `scanf()` will write it 
+order), high byte of which we may not send, `scanf()` will write it 
 for us as NULL-terminator.
 Try it:
 
@@ -241,8 +242,8 @@ Try it:
     $ 
 
 See, no segmentation fault, the program thinks that everything is Ok.
-And message that it tries but could not open a flag tells us that we 
-are on the right way. Check it with remote server:
+And there is message that it tries but could not open a flag tells us 
+that we are on the right way. Check it with remote server:
 
     $ python -c "print('run\n'+('A'*260) + ('A'*4 + '\x58\x08\x40\x00'*4))" | nc buffer-overflow.ctfcompetition.com 1337
     Your goal: try to crash the Cauliflower system by providing input to the program which is launched by using 'run' command.
