@@ -19,3 +19,4 @@ Beginner's Quest
         is ahead.
 
 
+![alt text](https://raw.githubusercontent.com/konelav/writeups/master/GoogleCTF2019-BQ/map.png)

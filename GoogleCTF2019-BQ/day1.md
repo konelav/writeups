@@ -23,7 +23,7 @@ Arrival & Reconnaissance
     know what's ahead of you.
 
 
-We can choose to not inspect Osmium immidiately. In this case there 
+We can choose not to inspect Osmium immidiately. In this case there 
 will be an additional task.
 
 Ad (**ad**)
@@ -153,7 +153,7 @@ padding). Decode it:
     Username: wireshark-rocks
     Password: start-sniffing!
 
-Okay, let's sniff `init_sat`'s traffic. Wireshark is certainly rocks, 
+Okay, let's sniff `init_sat`'s traffic. Wireshark certainly rocks, 
 but there are other good tools and I'm trying to leave command line 
 as rare as possible.
 
