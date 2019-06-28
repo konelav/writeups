@@ -77,6 +77,11 @@ inproper source URL. Let's use our PostBin and try:
 
     Body
 
+Ok, the flag is
+
+**CTF{3mbr4c3_the_c00k1e_w0r1d_ord3r}**
+
+
 But what could we see in Admin panel with his auth token? Open 
 WenConsole, do
 
@@ -113,9 +118,35 @@ Bad luck, he see the same message:
 
         Requests only accepted from 127.0.0.1: 
 
-(but there is some another way to look on this page and to gen second 
-flag)
+After some lurking on the main page we can see strange thing: video is 
+viewed with url `https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com/livestream/garden-livestream.webm`
 
-Ok, the flag is
+Why does it refer to the file with absolute path (and with no TLS)? Can 
+this page show us any file all over the world? Try:
 
-**CTF{3mbr4c3_the_c00k1e_w0r1d_ord3r}**
+    https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://google.com
+    => Your only allowed to make requests to "http://cwo-xss.web.ctfcompetition.com" 
+
+Ok then, it seems like server checks that requested page path starts 
+with `http://cwo-xss.web.ctfcompetition.com`. In fact this check does 
+not guarantee that URL's hostname in `cwo-xss.web.ctfcompetition.com`, 
+because the full URI specification (RFC3986) stetes that after scheme 
+(`http`), colon and two slashes goes *authority*, which has format:
+
+    [ userinfo "@" ] host [ ":" port ]
+
+Thus we can use string `cwo-xss.web.ctfcompetition.com` as userinfo.
+Actually we can append to it any additional characters, uncluding fake 
+"password" for authentification (that hopefully will not needed). What 
+is important is to add "@" character. After it we can add any host and 
+port. Let's try:
+
+    https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com:passw0rd@google.ru
+
+Yes, we did it! Cross fingers and request admin controls:
+
+    https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com:passw0rd@127.0.0.1/admin/controls
+
+And there is second flag:
+
+**CTF{WhatIsThisCookieFriendSpaceBookPlusAllAccessRedPremiumThingLooksYummy}**
