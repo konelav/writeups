@@ -1,5 +1,4 @@
-Google Capture The Flag 2019
-URL: https://capturetheflag.withgoogle.com/
+[Google Capture The Flag 2019](https://capturetheflag.withgoogle.com/)
 
 Beginner's Quest
 
@@ -19,4 +18,4 @@ Beginner's Quest
         is ahead.
 
 
-![alt text](https://raw.githubusercontent.com/konelav/writeups/master/GoogleCTF2019-BQ/map.png)
+![Map](https://raw.githubusercontent.com/konelav/writeups/master/GoogleCTF2019-BQ/map.png)

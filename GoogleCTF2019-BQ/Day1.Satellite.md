@@ -23,25 +23,6 @@ Arrival & Reconnaissance
     know what's ahead of you.
 
 
-We can choose not to inspect Osmium immidiately. In this case there 
-will be an additional task.
-
-Ad (**ad**)
-
-    We interrupt this program for a commercial break
-
-    https://www.youtube.com/watch?v=QzFuwljOj8Y 
-    
-Looking short video it can be seen that there are many fast-changing 
-scenes, so just download it and look locally frame-by-frame.
-
-    $ ffmpeg -i y2mate.mp4 frame%03d.jpg -hide_banner
-
-And in the `frame438.jpg` we can see it.
-
-**CTF{9e796ca74932912c216a1cd00c25c84fae00e139}**
-
-
 Satellite (**networking**)
 
     Placing your ship in range of the Osmiums, you begin to receive 

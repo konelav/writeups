@@ -265,6 +265,3 @@ server:
 The second one:
 
 **CTF{controlled_crash_causes_conditional_correspondence}**
-
-
-(There is also another unopened problem for this day on (easier) level)

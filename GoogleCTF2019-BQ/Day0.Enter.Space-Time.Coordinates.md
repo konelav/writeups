@@ -1,7 +1,6 @@
 Invitation
 
 
-
     You are a simple life form, exiled from your home planet and in
     search of a new place to call home. The ruling came fast. Your 
     taste in music was deemed to be far too "out-there-man" for anyone 

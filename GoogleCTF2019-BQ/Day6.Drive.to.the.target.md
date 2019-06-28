@@ -40,7 +40,11 @@ First of all, make code of single step: sending request and parsing
 response:
 
 
-    import urllib
+    try:
+        from urllib import urlencode, urlopen
+    except:
+        from urllib.parse import urlencode
+        from urllib.request import urlopen
     import re
 
     URL = 'https://drivetothetarget.web.ctfcompetition.com/?lat={lat:.4f}&lon={lon:.4f}&token={token}'
@@ -49,24 +53,29 @@ response:
     RE_TOKEN = re.compile(r'name="token" value="(?P<val>[^"]+)"')
     RE_SPEED = re.compile(r' (?P<val>[0-9\.])km/h')
 
-    def step(lat, lon, token):
-        url = URL.format(**{'token': token, 'lat': lat, 'lon': lon})
-        page = urllib.urlopen(url).read()
+    def step(lat, lon, token=None):
+        params = ''
+        if token is not None:
+            params = '?' +  urlencode({'token': token, 
+                'lat': lat, 'lon': lon})
+        url = BASE_URL + params
+        page = urlopen(url).read().decode('utf8')
         
-        closer, away, fast, far, stopped  = [page.find(patt) >= 0 for patt in
+        flags = [page.find(patt) >= 0 for patt in
             ['getting closer', 'getting away', 'too fast!', 'too far', 'should move']]
-        if not any(flags):
+        
+        if (not any(flags) and token is not None) or page.find('CTF{') >= 0:
             print(page)
-            raise  # something unexpected happens, hope it's CTF{...} page
         
         lat = float(RE_LAT.search(page).group('val'))
         lon = float(RE_LON.search(page).group('val'))
-        token = RE_TOKEN.search(page).group('val')
+        new_token = RE_TOKEN.search(page).group('val')
         speed = 0.0
+        closer, away = flags[:2]
         if closer or away:
             speed = float(RE_SPEED.search(page).group('val'))
         
-        return (lat, lon, token), speed, (closer, away, fast, far, stopped)
+        return (lat, lon, new_token), speed, flags
 
 
 In our future tries there almost certainly will be unhandled 
@@ -77,23 +86,24 @@ restarts.
 
 
     import json
-    
+
     def save_state(lat, lon, token, nstep, fname='state.json'):
         with open(fname, 'w') as f:
             f.write(json.dumps({"lat": lat, "lon": lon, 
-                "token": token, "nstep": nstep})
+                "token": token, "nstep": nstep}))
 
     def load_state(fname='state.json'):
         try:
             with open(fname, 'r') as f:
                 s = json.loads(f.read())
-        except:
+        except IOError:
             print("No state found, starting new session")
-            (lat, lon, token), _, _ = step(0, 0, '')
+            (lat, lon, token), _, _ = step(0, 0)
             s = {"lat": lat, "lon": lon, "token": token, "nstep": 0}
         return (s["lat"], s["lon"], s["token"], s["nstep"])
 
     s = (lat, lon, token, nstep) = load_state()
+    save_state(*s)
 
 
 And it can be forseen that we will need routine that moves us just 
@@ -104,7 +114,7 @@ the process.
 
     MAX_SPEEDUP = 1.2
     MAX_SPEEDDOWN = 0.8
-    
+
     def move(state, vel, max_speed, eps=1e-4):
         lat, lon, token, nstep = state
         direction_changed = False
@@ -117,7 +127,7 @@ the process.
             closer, away, fast, far, stopped = flags
             if far or fast:
                 k = MAX_SPEEDDOWN
-            elif stopped:
+            elif stopped or speed == 0:
                 k = MAX_SPEEDUP
             else:
                 k = max(MAX_SPEEDDOWN, min(max_speed / speed, MAX_SPEEDUP))
@@ -127,8 +137,8 @@ the process.
                 k = -k
                 direction_changed = True
             print("[{}] At ({:.4f}, {:.4f}), v({:.4f}, {:.4f}) * {:.4f}; "
-                "closer: {}".format(nstep, lat, lon, vel[0], vel[1], k, close))
-            vel = map([x*k for x in vel])
+                "closer: {}".format(nstep, lat, lon, vel[0], vel[1], k, closer))
+            vel = [x*k for x in vel]
             if sum([abs(x) for x in vel]) < eps:
                 raise
 

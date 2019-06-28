@@ -104,6 +104,3 @@ Firefox's WebConsole and just write to it:
 Then click to the link "Admin".
 Nothing interesting, just the same flag in plain text. But at least 
 we tried...
-
-(But it seems like there is second flag here. It will be future work)
-
