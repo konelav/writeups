@@ -23,7 +23,7 @@ Arrival & Reconnaissance
     know what's ahead of you.
 
 
-We can choose not to inspect Osmium immidiately. In this case there 
+We can choose not to inspect Osmium immediately. In this case there 
 will be an additional task.
 
 Ad (**ad**)

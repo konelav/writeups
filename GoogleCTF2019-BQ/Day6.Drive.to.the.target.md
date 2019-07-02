@@ -24,7 +24,7 @@ experiment with delays between requests. In a few minutes we can see
 that there are 5 basic answers of the server:
 
     - `getting closer` - obviously this is what we want, probably these 
-    new coordinated are somehow nearer to the flag; also we are 
+    new coordinates are somehow *nearer* to the flag; also we are 
     informed here about our speed, which seems to be limited by 50km/h
     - `getting away` - the opposite
     - `too fast!` - ratio of coordinate's change and request's delay 
@@ -79,10 +79,10 @@ response:
 
 
 In our future tries there almost certainly will be unhandled 
-exceptions, need of restarting script and so on. For not to lost all 
-immidiate results (as we plan to move constantly to the target) it is 
-useful to have some persistent storage that can be used between script 
-restarts.
+exceptions, need to restart the script and so on. For not to lost all 
+intermidiate results (as we plan to move constantly to the target) it 
+is useful to have some persistent storage that can be used between 
+script restarts.
 
 
     import json
@@ -145,7 +145,7 @@ the process.
 
 Now we can think about algorithm. It is trivial to do per-coordinate 
 optimization: just move along latitude until flag `closer` is raised, 
-the move along latitude and in the final steps we maybe will just need 
+then move along latitude and in the final steps we maybe will just need 
 to reduce step size (velocity).
 
 

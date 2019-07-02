@@ -1,5 +1,5 @@
 #!/usr/bin/python
-N = 10000
+N = 100000
 sieve = [True] * N
 for i in range(3,int(N**0.5)+1,2):
     if sieve[i]:

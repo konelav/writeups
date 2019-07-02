@@ -39,7 +39,7 @@ Home Computer (**forensics**)
     for you to learn more.
 
 Unzipping attachment we can see technical `note.txt` that is not for me.
-And `family.ntfs`, the name of this file speaks for it, but we can 
+And `family.ntfs`, the name of this file speaks for itself, but we can 
 check it:
 
     $ file family.ntfs 
@@ -50,7 +50,7 @@ Ok, just mount it then.
     $ mkdir ntfs
     $ sudo mount family.ntfs ntfs
 
-Quick look tells us that volume is full of empty files. Do find 
+Quick look tells us that partition is full of empty files. Do find 
 non-empty with `find` utility:
 
     $ find ntfs -size +0 -type f

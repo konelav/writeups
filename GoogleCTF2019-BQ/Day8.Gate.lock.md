@@ -12,11 +12,11 @@ Gate lock (**hardware**)
 
 Attachment contains a lot of different files. At first it looks like 
 some sort of reversing problem, and not hardware, at least for me, 
-beacause I had have no idea what is it all about. I looked into text 
+beacause I had no idea what is it all about. I looked into text 
 files, opened sqlite3 databases, wrote simple script for grabbing map 
 data and started to analyze map nodes with "unusual" size...
 At one point I realized that string "mesecons" appeared very often in 
-different places. Having no hope, I decided to give a try for Google... 
+different places. Having no hope, I decided to give a try to Google... 
 Yeah, stupid feeling, it is just a computer game *minetest* and it's 
 mod *mesecons*.
 
@@ -322,17 +322,13 @@ approach:
 
 Give it a try:
 
-    $ time python solver.py
+    $ python solver.py
     Signature: MTSM, version: 1, dimensions: 59 x 2 x 75, body: 35400b
     ....
     [('x01', False), ('x02', True), ('x03', False), ('x04', False), ('x05', False), ('x06', False), ('x07', True), ('x08', False), ('x09', True), ('x10', True), ('x11', True), ('x12', False), ('x13', False), ('x14', True), ('x15', False), ('x16', False), ('x17', False), ('x18', False), ('x19', False), ('x20', True)]
     CTF{01000010111001000001}
-    
-    real	0m0,484s
-    user	0m0,472s
-    sys	0m0,008s
 
 
-Rather fast for such dumb simulator/propagator and solver!
+Not bad for such dumb simulator/propagator and solver!
 
 **CTF{01000010111001000001}**

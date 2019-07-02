@@ -35,12 +35,12 @@ Satellite (**networking**)
 
 In archive we have two files - `README.pdf` and `init_sat`.
 The curse of my is an abscence of habit to really truly read README 
-files before taking any further actions. To be precise, I read the 
+files before taking any further actions. To be precise, I have read the 
 file, but did not look on picture. Though it is not very important.
 
 Ok, let's run `init_sat`. It requests some *satellite name*...
 How can we know it? Well, the easy path is to carefully read README.pdf 
-and realize that there is sign on the satellite's photo.
+and to realize that there is sign on the satellite's photo.
 But for me it is very hard path because of said above.
 So disasming gives the answer either.
 
@@ -103,12 +103,12 @@ So disasming gives the answer either.
 
 
 Wow, I'm glad that there is no need to reverse all this application!
-Really, there are A LOT of different stuff, including networking, 
-of course.
+Really, it has A LOT of different stuff, like regexps and 
+networking, of course.
 We can see now that for jumping over "Unrecognized satellite" we must 
-enter string "osmium". And check is case insensitive - this fact can't 
-be seen from README.pdf! Let's use it, just for not feeling myself so 
-stupid.
+to enter string "osmium". And the check is case insensitive - this fact 
+can't be seen from README.pdf! Let's use it, just for not feeling 
+myself so stupid.
 
     $ ./init_sat 
     Hello Operator. Ready to connect to a satellite?
@@ -135,8 +135,8 @@ padding). Decode it:
     Password: start-sniffing!
 
 Okay, let's sniff `init_sat`'s traffic. Wireshark certainly rocks, 
-but there are other good tools and I'm trying to leave command line 
-as rare as possible.
+but there are other good tools and I'm trying leave command line as 
+rare as possible
 
 First, open another shell and see what connections `init_sat` has.
 
@@ -164,7 +164,7 @@ well as a string `CTF{\S{40}}` (and how would I know this if looked
 README's photo?).
 Doing data protection on client-side is a Great Evil, so let's try to 
 solve this problem in completely another way, not like "networking", 
-but like "pwn" problem.
+but "pwn" problem.
 
     $ r2 -w init_sat 
      -- ((fn [f s n] (str (f f s n) "dare2")) (fn [f s n] (pr s) (if (> n 0) (f f (str s "ra") (dec n)) s)) "" (/ 1.0 0))

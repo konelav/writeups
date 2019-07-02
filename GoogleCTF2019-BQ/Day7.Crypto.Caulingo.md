@@ -40,8 +40,8 @@ article should be enough for this task. What is important:
   secrets can be calculated from `P`, `Q` and publicly available `e`
   - therefore, if only we could find such `P` and `Q` that `n = P*Q`, 
   we can easily decrypt message, i.e. calculate some big number that 
-  being written in binary little-endian format represents some data, 
-  often compressed, but also it can be simple ascii text
+  being written in binary format represents some data, often 
+  compressed, but also it can be simple ascii text
 
 In general, factorization problem is hard. There is online service 
 *factordb* which can do simple factorization and primality-tests for 
@@ -54,8 +54,8 @@ are *Fermat test* and *Rabin Miller test*). Trying to post given `n` to
 is composite, with unknown factors.
 
 Fortunately, there are very strict limitations on `P` and `Q` in our 
-certain case. We are guaranteed that there exists such integer `A` and 
-`B` that `A*P` and `B*Q` are very close numbers. And in Wikipedia we 
+certain case. We are guaranteed that such integers `A` and `B` exists 
+that `A*P` and `B*Q` are very close numbers. And in Wikipedia we 
 can find that close factors of `n` is the basic example of vulnerable 
 key generation, because there is effective algorithm called *Fermat 
 factorization* that can relatively quick factorize such number. In a 
@@ -129,9 +129,10 @@ It is obvious that not every combination of `A` and `B` must be
 checked. For example, there is no reason to check diffirent 
 combinations that gives same multiple, for example `A = 2, B = 10` and 
 `A = 4, B = 5`, since both cases will call *Fermat factorization* with 
-exactly the same argument `20*N`. Furthermore, we can state that 
-`A <= B`, and if it's not true, just swap `P` and `Q` and hence `A` 
-and `B` values so it becomes true.
+exactly the same argument `20*N`. Actually, we can even check only such 
+pairs that `GCD(A,B) == 1`, though it can't give much acceleration.
+Additionally, we can state that `A <= B`, and if it's not true, just 
+swap `P` and `Q` and hence `A` and `B` values so it becomes true.
 
     checked = set()
     for A in range(1, 1000+1):
@@ -205,8 +206,9 @@ attentively:
     (6) a + b = a - b + C               ; from (2) and (5)
     (7) 2*b = C                         ; from (6)
 
-Here it is, `C` **must** be even for success of our solution. But 
-there is no such restriction on it in `project_dc.pdf`!
+Here it is, `C` **must** be even for success of our solution (and 
+to be precise `abs(b) < 5000`, but this is minor issue). But there is 
+no such restriction on it in `project_dc.pdf`!
 Why we have this limitation? Well, it is obvious that *Fermat 
 factorization* tries to find factors that differ by even value, since 
 `(a + b) - (a - b) = 2*b`. Usually this is not a problem and quick 
@@ -223,29 +225,27 @@ all. Indeed, `fermat_factor(5*6) is None`.
 Therefore, for even input *Fermat factorization* can only find any 
 solution if input is a multiple of 4 (`(2*P)*(2*Q) = 4*P*Q`). 
 
-Taking in account all said above, patch our solution:
+Taking in account all said above, patch our `fermat_factor` 
+implementation:
 
-    checked = set()
-    for A in range(1, 1000+1):
-        print("A = {} (checked {} value(s))".format(A, len(checked)))
-        for B in range(1, A+1):
-            ABx4 = 4*A*B
-            if ABx4 in checked:
-                continue
-            checked.add(ABx4)
-            factors = fermat_factor(ABx4*N, 10000)
-            if factors is not None:
+    def fermat_factor(N, max_b=None):  # optionally stop searching of factors when difference between them reaches certain limit
+        x4 = (N % 2 == 0 and N % 4 != 0)
+        if x4:  # factorization will fail without multiplication by 4
+            N *= 4
+        a = int_sqrt(N)
+        b_square = a*a - N  # since N = (a - b)*(a + b) = a^2 - b^2 => b^2 = a^2 - N
+        while a <= N:
+            b = int_sqrt(b_square)
+            if b*b == b_square:  # yes, we find it
+                if x4:
+                    return (a - b) // 2, (a + b) // 2
+                return a - b, a + b
+            if max_b is not None and b > max_b:
                 break
-        if factors is not None:
-            break
-    APx2, BQx2 = factors
-    P = AP // (A*2)
-    Q = BQ // (B*2)
-    if P*Q != N:
-        raise
-    print("P = {}".format(P))
-    print("Q = {}".format(Q))
+            b_square += 2*a + 1  #same as: b_square = (a + 1)*(a + 1) - N
+            a += 1
 
+Now `fermat_factor(5*6)` works just fine, so we can try again:
 
     $ python factor.py 
     len(N) = 2048

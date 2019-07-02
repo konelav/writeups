@@ -42,14 +42,14 @@ We need to understand internal logic of both virtual machine and the
 program, then somehow guess what output should it have or speed-up it's 
 execution.
 
-Comment in the `vm.py` directly say that it's simple stack-based 
+Comment in the `vm.py` directly says that it's simple stack-based 
 machine, and the list `VM.OPERATIONS` looks quite self-explaining, i.e.:
 
   - this is stack-machine for sure, very similar to Forth, for example 
-  binary operators like `add`, `xor` etc. takes top 2 elements of the 
+  binary operators like `add`, `xor` etc. take top 2 elements of the 
   stack and put the result on their place (on top)
-  - there are two accumulators, that acts like registers for temporary 
-  store integer values
+  - there are two accumulators, that act like registers for temporary 
+  storage of integer values
   - there is block of memory called `rom` which contains program 
   instructions, which are can be either operations with their operands, 
   or static data (integer numbers), or labels (symbols).
@@ -64,7 +64,7 @@ Additionaly we can realize the following facts:
   of `endif` statement: VM executes code after `if_zero` and 
   `if_not_zero` until see this instruction or some `jump` instruction
   - `if self.rom[self.instruction_pointer] == '🥇':` - it is 
-  designtation of accumulator 1
+  designation of accumulator 1
   - `elif self.rom[self.instruction_pointer] == '🥈':` - it is 
   designation of accumulator 2
   - `while self.rom[self.instruction_pointer] != '✋':` - it is some 
@@ -72,8 +72,8 @@ Additionaly we can realize the following facts:
   interpreted as 10-based digits of a number, and it is used mainly 
   in `load` instruction, which obviously loads some constant to one of 
   two accumulators
-  - and each digit if each "numbers" is actually a string that starts 
-  with ascii-digit and unicode-trash after it.
+  - and each digit in each "numbers" is actually a unicode-sequence 
+  which starts from ascii-code of this digit.
 
 First of all, we should try to guess the algorithm by looking on the 
 execution process. We can modify VM, for example, by adding to it 
@@ -95,8 +95,8 @@ And the output is:
     .......
 
 The second-to-last value on the stack is obvious iterator, most of the 
-stack is constant numbers from program code, and it seems like all 
-what program is doing is some "decoding" of this data 
+stack filled by constant numbers from program code, and it seems like 
+all what program is doing is some "decoding" of this data 
 character-by-character, one number for one character. And if it quickly 
 slows down to less than 1 character per minute, what could it become 
 in the end, where we can see numbers like 101141058?
@@ -527,8 +527,8 @@ as the starting value of `l` is `j`, hence at last iteration when `l`
 becomes zero, `k` becomes reversed `j`.
 We can conclude that this `check()` is successfull if and only if `j` 
 is palindromic number, because until `l` actually become zero, `k` will 
-have even different number of digits comparing to `j` and can't they 
-can't be equal.
+have even different number of digits comparing to `j` and they can't be 
+equal.
 And one more detail: `i` is the index of key in sequence of such 
 numbers.
 
@@ -549,7 +549,7 @@ should be enough to make deterministic primality test. The biggest
 number has 9 digits, so it is enough to precalculate all primes up to
 5 digits long and use them:
 
-    N = 10000
+    N = 100000
     sieve = [True] * N
     for i in range(3,int(N**0.5)+1,2):
         if sieve[i]:
@@ -610,7 +610,7 @@ Run it:
     $ python3 solve.py 
     http://emoji-t0anaxnr3nacpt4na.web.ctfcompetition.com/humans_and_cauliflowers_network/
 
-Go to this link and found several pages with photos, one of which 
+Go to this link and find several pages with photos, one of which 
 contains the flag.
 
 In my opinion, this problem is the best one of all Beginner's Quest.

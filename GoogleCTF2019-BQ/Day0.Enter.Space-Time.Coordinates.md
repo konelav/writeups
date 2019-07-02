@@ -34,13 +34,14 @@ Enter Space-Time Coordinates (**misc**)
     logs, but is there a manual? Or should you just keep beating the 
     console?
     
-Loading attachment, unzipping it, and see two files: `log.txt` and 
+Load attachment, unzip it, see two files: `log.txt` and 
 `rand2`.
 
 `log.txt` is a text file with some places and coordinates.
 `rand2` is a binary that can be run and that requests two numbers.
 
-Well, the first thing with binaries is just too look on their strings.
+Well, the first thing that should be done with binaries is just to 
+look on their strings.
 
     $ strings rand2 | grep CTF
     Arrived at the flag. Congrats, your flag is: CTF{welcome_to_googlectf}

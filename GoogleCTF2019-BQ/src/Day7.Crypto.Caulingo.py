@@ -19,11 +19,16 @@ def int_sqrt(N):  # Newton's method of finding floor(sqrt(N))
         x = next_x
 
 def fermat_factor(N, max_b=None):  # optionally stop searching of factors when difference between them reaches certain limit
+    x4 = (N % 2 == 0 and N % 4 != 0)
+    if x4:
+        N *= 4
     a = int_sqrt(N)
     b_square = a*a - N  # since N = (a - b)*(a + b) = a^2 - b^2 => b^2 = a^2 - N
     while a <= N:
         b = int_sqrt(b_square)
         if b*b == b_square:  # yes, we find it
+            if x4:
+                return (a - b) // 2, (a + b) // 2
             return a - b, a + b
         if max_b is not None and b > max_b:
             break
@@ -38,18 +43,18 @@ checked = set()
 for A in range(794, 1000+1):
     print("A = {} (checked {} value(s))".format(A, len(checked)))
     for B in range(1, A+1):
-        ABx4 = 4*A*B
-        if ABx4 in checked:
+        AB = A*B
+        if AB in checked:
             continue
-        checked.add(ABx4)
-        factors = fermat_factor(ABx4*N, 10000)
+        checked.add(AB)
+        factors = fermat_factor(AB*N, 5000)
         if factors is not None:
             break
     if factors is not None:
         break
-APx2, BQx2 = factors
-P = APx2 // (A*2)
-Q = BQx2 // (B*2)
+AP, BQ = factors
+P = AP // A
+Q = BQ // B
 if P*Q != N:
     raise
 print("P = {}".format(P))
@@ -77,11 +82,3 @@ import binascii
 pt = decrypt(P, Q, e, m)
 msg = binascii.unhexlify(hex(pt)[2:].replace('L', ''))
 print(msg)
-
-while plain > 0:
-    contents.insert(0, plain & 0xff)
-    plain >>= 8
-print(contents)
-
-txt = bytearray(contents)
-print(txt.decode())

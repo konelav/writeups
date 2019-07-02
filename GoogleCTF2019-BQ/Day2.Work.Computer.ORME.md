@@ -35,7 +35,7 @@ Work Computer (ORME) (**sandbox**)
     attempting to access your networks.. looking for Cauliflower. That 
     is, *if* they can learn to navigate such things.
 
-There is some network address, let's try to connect to it.
+Some network address is given, let's try to connect to it.
 
     $ nc readme.ctfcompetition.com 1337
     > whoami
@@ -48,7 +48,7 @@ There is some network address, let's try to connect to it.
     error: No such file or directory
 
 Well, we have a shell, we have two files that must be read, but we 
-have not `cat` (and `grep`). We plan to read both, of course.
+have no `cat` (and `grep` etc.). We plan to read both, of course.
 Let's have a look what we have then.
 
     > ls -l /bin /sbin /usr/bin /usr/sbin                                         
@@ -84,7 +84,7 @@ Let's have a look what we have then.
 Wow, a lot of stuff! First of all, this is Busybox system. It means 
 that most of utilities are embedded in `busybox` executable and almost 
 all other are just symlinks to it. Busybox first checks `argv[0]` value 
-and executed appropriate piece of code. But also certain utility can be 
+and executes appropriate piece of code. But also certain utility can be 
 invoked by executing `busybox` directly and giving it proper arguments.
 Try it:
 
@@ -93,12 +93,12 @@ Try it:
 
 Aha, this is modified version of busybox. After all, it would be too 
 easy.
-But still there are A LOT of stuff. And a lot of possible solutions. 
+But still there are tons of stuff. And a lot of possible solutions. 
 If we have little or no expirience with unix-like environments, then we 
 can just go through the list command-by-command and read each man-page 
 on the web. Quickly we can find, for example, that `iconv` utility can 
 be used to read any file and print it to the terminal possibly but not 
-necessary doing codepage conversion. Give it a try:
+necessary with codepage conversion. Give it a try:
 
     > iconv README.flag
     CTF{4ll_D474_5h4ll_B3_Fr33}
@@ -125,7 +125,7 @@ contained in `busybox`. And maybe in some other places. Check it:
 Yep, it is there. And `upx` utility looks very suspicious and certainly 
 can be used to solve issue. But let's do some googling first, it is 
 their contest after all!
-Googling "*change permissions without chmod*" immidiately leads us to 
+Googling "*change permissions without chmod*" immediately leads us to 
 the StackOverflow page with description of trick with loader 
 `/lib/ld-linux.so`. Just use it to run `busybox` and `chmod` in it:
 

