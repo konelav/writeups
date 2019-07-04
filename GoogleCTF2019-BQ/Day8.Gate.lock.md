@@ -332,3 +332,37 @@ Give it a try:
 Not bad for such dumb simulator/propagator and solver!
 
 **CTF{01000010111001000001}**
+
+
+But it can be significantly improved. Really, there is no need in 
+`eval()`, since evaluation of all logic gates is trivial.
+We can reduce `scheme` by removing all `CONNECTION` tiles, implement 
+routine for setting known value to known state (like `lamp = True`) and 
+then use essentially the same backtracking algorithm for unknown 
+inputs.
+Complete code is given in `src/Day8.Gate.lock.solver.py`.
+It is almost applicable for the *big brother* task from main GoogleCTF 
+contest - **minetest** task. On my retro laptop it gives the following 
+output:
+
+
+    $ time python solver.py 
+    Total meaningful nodes: 3361
+    Total inputs: 40
+    Lamp at: (1, 1938)
+    [  100] level 21 [ 856 / 3361] 11111111111111111101101011**************
+    [  200] level 21 [1706 / 3361] 11111111111111111010101011100011********
+    ..........
+    [4129900] level 15 [2153 / 3361] 111001010100011000101011111000011*******
+    [4130000] level 11 [ 887 / 3361] 1110010101000101111010******************
+    [4130100] level 17 [2688 / 3361] 1110010101000101110010111110000110011***
+    (4130102, '1110010101000101110010111110000110011001')
+
+    real	204m34.556s
+    user	204m30.715s
+    sys	0m1.465s
+
+Less than 4 hours on old Core2Duo, without any tricky algorithms or 
+optimization hueristics, and with pure python.
+
+**CTF{1110010101000101110010111110000110011001}**
